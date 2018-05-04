@@ -1,0 +1,4 @@
+"0","tabla.comparacion <- group_by(tweets, grupos, periodo = switch(EXPR = (mes >= primer.dia.mes - dias.mes.anterior),TRUE = ""En el mes"", FALSE = ""Historico"")) %>%
+"
+"2","Error: unexpected '=' in ""tabla.comparacion <- group_by(tweets, grupos, periodo = switch(EXPR = (mes >= primer.dia.mes - dias.mes.anterior),TRUE =""
+"

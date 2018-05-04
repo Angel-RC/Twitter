@@ -1,0 +1,24 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1521543640415.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "19E48DD3",
+    "lastKnownWriteTime" : 1521811946,
+    "last_content_update" : -2147483648,
+    "path" : "//monduver/comun_app/AnalisisyPoliticaPublicas/Datos/Twitter/Cuenta @generalitat/PRUEBASA&L/PRE/informes/informe_provisional.Rmd",
+    "project_path" : "informes/informe_provisional.Rmd",
+    "properties" : {
+        "cursorPosition" : "19,40",
+        "docOutlineVisible" : "0",
+        "last_setup_crc32" : "",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

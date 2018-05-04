@@ -1,0 +1,20 @@
+# Obtenemos la informacion de historico
+load("datos/seguidores_historico.RData")
+# Obtenemos los seguidores de cada user en un elemento de la lista
+seguidores.list <- obtener_seguidores(users)
+# Juntamos los seguidores en un data.frame
+seguidores.df <- do.call(rbind,seguidores.list) %>% distinct
+# Obtenemos la informacion de dichos seguidores
+info.seguidores <- obtener_informacion(seguidores.df)
+# Identificamos a quien siguen
+info.seguidores <- identificar_origen (info.seguidores, 1, users, seguidores.list, 1)
+# Obtenemos informacion del alcance y repercusion
+seguidores.nuevo <- repercusion(users, info.seguidores)
+# Añadimos fecha de extracción
+seguidores.nuevo$extraccion <- format(Sys.Date(), "%d/%m/%y")
+# Añadimos la nueva informacion al historico
+seguidores.historico <- rbind(seguidores.historico,seguidores.nuevo)
+# Guardamos los datos en el historico
+save(seguidores.historico, file = "datos/seguidores_historico.RData")
+
+

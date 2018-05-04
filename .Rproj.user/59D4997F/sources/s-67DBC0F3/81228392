@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1520849816858.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "81228392",
+    "lastKnownWriteTime" : 1524038458,
+    "last_content_update" : -2147483648,
+    "path" : "//monduver/comun_app/AnalisisyPoliticaPublicas/Datos/Twitter/Cuenta @generalitat/PRUEBASA&L/PRE/R/ejecucion.R",
+    "project_path" : "R/ejecucion.R",
+    "properties" : {
+        "cursorPosition" : "15,17",
+        "scrollLine" : "6"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

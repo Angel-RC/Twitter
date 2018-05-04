@@ -1,0 +1,20 @@
+# Librerias necesarias
+library("ROAuth")
+library("twitteR")
+library("rtweet")
+library("tidyverse")
+library("xlsx")
+library("tm")
+library("reshape2")
+library("RColorBrewer")
+library("wordcloud2")
+library("wordcloud")
+library("progress")
+library("installr")
+library("zip")
+library("readxl")
+library("knitr")
+library("lubridate")
+library("kableExtra")
+
+

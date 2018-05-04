@@ -1,0 +1,7 @@
+"0"," indicadores_seguidores <- left_join(seguidores.historico, usuarios, by = c(""cuenta"" = ""users"")) %>%                                        
+                              group_by(grupos, mes = extraccion) %>% 
+                              summarise_if(is.numeric,""sum"") 
+"
+"2","Error in UseMethod(""left_join"") : 
+  no applicable method for 'left_join' applied to an object of class ""list""
+"

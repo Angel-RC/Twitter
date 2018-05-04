@@ -1,0 +1,85 @@
+---
+title: "informe"
+author: "becarios precarios"
+date: "9 de febrero de 2018"
+output:
+  pdf_document:
+    keep_tex: yes  
+    toc: true
+    toc_depth: 3
+    number_sections: true
+    fig_caption: true
+    df_print: kable
+lang: "es"
+---
+
+```{r setup, include=FALSE,echo=FALSE}
+# Cargamos librerias, variables y funciones
+source("../R/librerias.R")
+source("../R/variables_globales.R")
+source("../R/funciones.R")
+source("../R/funciones_informe.R")
+
+# Cargamos historico.tweets
+load("../datos/historico_tweets.RData")
+# Cargamos historico.cuentas
+
+```
+
+
+#fds
+##sadfg
+###ds
+```{r, tweets, echo=FALSE,fig.width=8, fig.height=4}
+
+# obtenemos informacion de los tweets
+info.tweets <- obtener_info_tweets(historico.tweets)
+
+# obtenemos la tabla de informacion mensual
+info.mes <- filter(info.tweets, mes <  primer.dia.mes,
+                                mes >= primer.dia.mes - dias.mes.anterior)
+
+# creamos la tabla para comparar el mes con el promedio mensual
+comparacion.mes <- tabla_comparacion_tweet(info.tweets) %>% round()
+kable(comparacion.mes)
+
+# obtenemos serie temporal de tweets
+n.tweets.meses = group_by(info.tweets, mes) %>% 
+                 summarise(sum(n.tweets)) %>%  
+                 select(2) %>% 
+                 ts(start = c(2015, 1), frequency = 12)
+
+# graficamos la evolución
+plot(n.tweets.meses, 
+     main = "nº Tweets por meses",
+     ylab = "Publicados",
+     xlab = "Meses")
+abline(h=mean(n.tweets.meses),col = "red")
+
+
+# clasificamos los tweets que son propios y retweets y respuestas o no
+tweets.mes <- filter(historico.tweets, created_at <  primer.dia.mes,
+                                       created_at >= primer.dia.mes - dias.mes.anterior)
+
+table.retweets   <- table(tweets.mes$is_retweet, tweets.mes$screen_name)
+table.respuestas <- table(tweets.mes$is_quote,   tweets.mes$screen_name)
+
+# hacemos los barplots
+par(mfrow=c(1,2))
+barplot(prop.table(table.retweets,2),
+        main = "Tipos de tweets",
+        las=2,
+        cex.names = 0.8,
+        beside = FALSE,
+        legend.text = c("propios","retweets"),args.legend = list(x = "bottomleft"),
+        col = c("cornsilk","cadetblue1"))
+
+barplot(prop.table(table.respuestas,2),
+        main = "Porcentaje de respuestas",
+        las=2,
+        cex.names = 0.8,
+        legend.text = c("Respuesta","No respuesta"),args.legend = list(x = "bottomleft"),
+        beside = FALSE,
+        col = c("cornsilk","cadetblue1"))
+
+```

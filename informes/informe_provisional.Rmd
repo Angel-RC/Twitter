@@ -1,0 +1,110 @@
+---
+title: "informe"
+author: "becarios precarios"
+date: "9 de febrero de 2018"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+# Cargamos librerias, variables y funciones
+source("../R/librerias.R")
+source("../R/variables_globales.R")
+source("../R/funciones.R")
+source("../R/funciones_informe.R")
+
+# Cargamos historico.tweets
+load("../datos/historico_tweets.RData")
+# Cargamos historico.cuentas
+load("../datos/historico_cuentas.RData")
+# Cargamos historico.seguidores
+load("../datos/historico_seguidores.RData")
+# Cargamos historico.menciones 
+load("../datos/historico_menciones.RData")
+
+# Obtenemos los indicadores agrupados
+
+```
+
+Mostraremos la información de la actividad en el mes
+# Actividad
+
+```{r}
+
+cuentas.mes <- filter(historico.cuentas, extraccion == max(extraccion))
+
+
+ indicadores.creacion <- obtener_indicadores(cuentas.mes)
+ kable(indicadores.creacion)
+ 
+ 
+ actividad.mes <- obtener_actividad(tweets.mes)
+ kable(actividad.mes[[1]])
+```
+
+ Interacción
+
+```{r, tweets}
+
+# obtenemos informacion de los tweets
+tweets <- indicadores_tweets(historico.tweets, "grupos")
+
+# Creamos la tabla de comparacion
+tabla.comparacion <- group_by(tweets, grupos, periodo = mes >= primer.dia.mes - dias.mes.anterior) %>%
+                     summarise_all(mean) 
+
+tabla.comparacion$periodo[tabla.comparacion$periodo == TRUE]  <-  "En el mes"
+tabla.comparacion$periodo[tabla.comparacion$periodo == FALSE] <-  "Historico"
+
+# obtenemos serie temporal de tweets
+n.tweets.meses = group_by(tweets, mes,generalitat = grupos=="Generalitat") %>% 
+    summarise(n.tweets = sum(n.tweets)) %>% ungroup()
+
+
+
+an.tweets.meses.generalitat=filter(n.tweets.meses,generalitat==TRUE)%>%  
+    select(3) %>% 
+    ts(start = c(2017, 11), frequency = 12)
+
+
+an.tweets.meses.consellerias=filter(n.tweets.meses,generalitat==FALSE)%>%  
+    select(3) %>% 
+    ts(start = c(2015, 1), frequency = 12)
+
+# graficamos la evolución
+plot(n.tweets.meses, 
+     main = "nº Tweets por meses",
+     ylab = "Publicados",
+     xlab = "Meses")
+
+
+# clasificamos los tweets que son propios y retweets y respuestas o no
+table.retweets   <- table(tweets.mes$is_retweet, tweets.mes$screen_name)
+table.respuestas <- table(tweets.mes$is_quote,   tweets.mes$screen_name)
+
+# hacemos los barplots
+barplot(prop.table(table.retweets,2),
+        beside = FALSE,
+        col = c("cornsilk","cadetblue1"))
+
+barplot(prop.table(table.respuestas,2),
+        beside = FALSE,
+        col = c("cornsilk","cadetblue1"))
+
+```
+
+
+# Seguidores
+```{r seguidores}
+
+    indicadores_seguidores <- left_join(historico.seguidores, usuarios, by = c("cuenta" = "users")) %>%
+                              group_by(grupos, mes = extraccion) %>% 
+                              summarise_if(is.numeric,"sum") 
+
+
+seguidores.mes <- seguidores.historico[seguidores.historico$extraccion >= mes-1,]
+seguidores.mes$num.seguidores <- cuentas.mes$followersCount
+seguidores.mes$num.listas     <- cuentas.mes$listedCount
+seguidores.mes$ratio          <- cuentas.mes$followersCount/cuentas.mes$friendsCount
+
+kable(seguidores.mes)
+```

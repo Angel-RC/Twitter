@@ -1,0 +1,342 @@
+###########################################################################################
+# Extraemos ID de los seguidores de las cuentas
+###########################################################################################
+obtener_seguidores <- function(users) {
+    N <- length(users)
+    seguidores <- list() 
+    
+    pb <- progress_bar$new(format = "Obteniendo seguidores [:bar] :percent Tiempo :elapsed",
+                           total  = N, 
+                           clear  = FALSE, 
+                           width  = 60)
+    for(i in 1:N){
+        
+        seguidores[[i]] <- get_followers( user = users[i],
+                                          n    = 3,#"all",
+                                          page = "-1",
+                                          retryonratelimit = TRUE)
+        
+        seguidores[[i]] <- as.data.frame(seguidores[[i]])
+        pb$tick()
+    }
+    return(seguidores)
+}
+
+###########################################################################################
+# Extraemos la informacion de los usuarios para cuando tienes mas de 90000
+###########################################################################################
+obtener_informacion <- function(users){
+    
+        N <- dim(users)[1]
+    
+    max.users <- 90000
+    total.rep <- ceiling(N/max.users)
+    
+    info.users <- list()
+    
+    for (i in 1:total.rep){
+        inicio <- (i - 1) * max.users + 1
+        final  <- min(i * max.users, N)
+        
+        info.users[[i]] <- lookup_users(users[inicio:final,])  }
+    
+    info.users.df <- do.call(rbind, info.users)
+    info.users.df <- as.data.frame(info.users.df)
+    arrange(info.users.df,info.users.df$statuses_count)
+    return(info.users.df)
+}
+
+###########################################################################################
+# Identificamos con TRUE para los elementos de los que procede
+###########################################################################################
+#' 
+#'
+#' @param datos           El data.frame 
+#' @param pos.datos       La posicion donde esta la variable que queremos buscar (id)
+#' @param identificacion  Vector a partir del cual se agrupan
+#' @param lista           Lista donde esta la informacion de identificacion
+#' @param pos.lista       La posicion donde esta la variable en la que queremos buscar (id) 
+#'
+#' @return                El data.frame con las columnas de identificacion añadidas
+
+identificar_origen <- function(datos, pos.datos, identificacion, lista, pos.lista){
+for (j in 1:length(identificacion)){
+   
+    datos$columna = FALSE
+    datos$columna[ datos[,pos.datos] %in% lista[[j]][,pos.lista]] = TRUE
+    colnames(datos)[ colnames(datos) == "columna"] = identificacion[j]
+    
+}
+    return(datos)
+}
+
+###########################################################################################
+# Obtener tweets que contienen ciertas palabras
+###########################################################################################
+obtener_menciones <- function(palabras,N){
+    num <- length(palabras)
+    pb  <- progress_bar$new(format = "Obteniendo tweets [:bar] :percent Tiempo :elapsed",
+                            total  = num, 
+                            clear  = FALSE, 
+                            width  = 60)
+    
+    tweets.palabra <- list()
+    for(i in 1:num){
+        
+        tweets.palabra[[i]] = searchTwitter( searchString = palabras[i], # IMPORTANTE: solo se almacenan tweets de 10 dias atras    
+                                             n            = N,
+                                             lang         = "es",
+                                             since        = '2017-12-02',      
+                                             until        = '2018-11-01',
+                                             locale       = idValencia,
+                                             resultType   = "mixed",      #"recent" solo recientes, "popular" solo los mas populares
+                                             sinceID      = NULL,         # mas nuevo que
+                                             maxID        = NULL,         # mas viejo que
+                                             geocode      = NULL )        # filtra un radio latitud/longitud
+        
+        tweets.palabra[[i]] <- twListToDF( tweets.palabra[[i]])
+        pb$tick()   
+    }
+    return(tweets.palabra)
+}
+
+
+###########################################################################################
+# Limpiamos el texto pasando a minusculas, quitando caracteres extraños y urls
+###########################################################################################
+Limpiar_texto <- function(texto) {
+    nice.str <- c()
+    for(i in 1:length(texto)){
+    str <- iconv(texto[i],'UTF-8','latin1', sub = '')
+    str <- gsub("\n"," ",str)
+    words <- unlist(strsplit(str, " "))
+#   urls  <- grep("http",words)
+#   if(!is.empty(urls)){
+#   words <- words[-urls]
+#   }
+    in.alphabet <- grep(words, pattern = "[a-z|0-9]", ignore.case = T)
+    
+    nice.str[i] <- paste(words[in.alphabet], collapse = " ")
+    nice.str[i] <- tolower(nice.str[i])
+    }
+    return(nice.str)
+}
+
+
+###########################################################################################
+# Calculamos la informacion de repercusion y lista de seguidores top activos e influyentes
+###########################################################################################
+
+repercusion <- function(users,info.seguidores) {
+
+    media.segundosalto <- c()
+    media.tweets       <- c()
+    segui.activos      <- c() 
+    segui.influyentes  <- c()
+    list.activos       <- list()
+    list.influyentes   <- list()
+    tweets.necesarios  <- 1000    # Tweets necesarios para ser considerado usuario activo
+    seguidores.necesarios  <- 10000   # Seguidores necesarios para ser considerado influyente
+    seguidores.activos <- info.seguidores[info.seguidores$statuses_count>tweets.necesarios,]
+    arrange(seguidores.activos,seguidores.activos$statuses_count)
+    
+    for (i in 1:length(users)){
+        pos <- which(colnames(info.seguidores) == users[i])
+        
+        media.segundosalto[i] <- mean(info.seguidores$followers_count[info.seguidores[pos]==TRUE])
+        media.tweets[i]       <- mean(info.seguidores$statuses_count[info.seguidores[pos]==TRUE])
+        
+        segui.activos[i]     <- sum(seguidores.activos[,pos])
+        segui.influyentes[i] <- sum(seguidores.activos[seguidores.activos$followers_count > seguidores.necesarios,pos])
+        
+        
+        list.activos[[i]]     <- seguidores.activos[seguidores.activos[pos]==TRUE,][1:top.activos,]
+        list.influyentes[[i]] <- seguidores.activos[seguidores.activos$followers_count > seguidores.necesarios & seguidores.activos[pos]==TRUE,][1:top.influyentes,]
+        
+    }
+    
+    repercusion.seguidores <- data.frame(users, media.segundosalto,media.tweets,segui.activos,segui.influyentes)
+    names(repercusion.seguidores) = c("cuentas", 
+                                      "nº medio seguidores por seguidor", 
+                                      "nº medio tweets por seguidor", 
+                                      "% seguidores activos", 
+                                      "% seguidores influyentes")
+    
+    top.activos     <- do.call(rbind,list.activos) %>% distinct
+    top.influyentes <- do.call(rbind,list.influyentes) %>% distinct
+    
+    resultado <- list(repercusion.seguidores, top.activos, top.influyentes)
+    return(resultado)
+    
+}
+
+
+###########################################################################################
+# Extraemos los ultimos tweets de cada cuenta hasta un maximo de 3200
+###########################################################################################
+tweets_nuevos <- function(users) {
+    tweets.nuevos <- list()
+    N <- length(users)
+    
+    pb <- progress_bar$new(format = "Obteniendo tweets [:bar] :percent Tiempo :elapsed",
+                           total  = N, 
+                           clear  = FALSE, 
+                           width  = 60)
+    
+    for (i in 1:N){
+        
+        tweets.nuevos[[i]] <- get_timeline (user   = users[i],
+                                            n      = 3,  
+                                            max_id = NULL,
+                                            home   = FALSE)# Consulta los tweets publicados por user (TRUE= los tweets publicados por las cuentas que sigue)
+        
+        # Quitamos informacion de geolocalizacion y de archivos media sobrante
+        pos.geo.media <- c( 18, 21, 23, 24, 25, 40, 41, 42)
+        
+        tweets.nuevos[[i]] <- as.data.frame(tweets.nuevos[[i]][,-pos.geo.media]) 
+        
+        pb$tick()
+    }
+    return(tweets.nuevos)
+} 
+
+"%!in%" <- function(x, table) match(x, table, nomatch = 0) == 0
+###########################################################################################
+# Añade al historico la ultima informacion de los datos
+###########################################################################################
+actualizar_informacion <- function(antiguo, nuevo, pos) {
+    informacion <- list()
+    n <- length(nuevo)
+   
+    for (i in 1:n){
+       
+        nuevos           <- nuevo[[i]]
+        antiguos         <- antiguo[[i]]
+        informacion[[i]] <- rbind(nuevos, antiguos[antiguos[,pos] %!in% nuevos[,pos],] )
+        
+    }
+    
+  return(informacion)
+    
+}
+
+###########################################################################################
+# Obtenemos los indicadores desde la creación de las cuentas 
+###########################################################################################
+
+obtener_indicadores <- function (datos){
+    
+    num.tweets            = datos$statusesCount 
+    
+    fecha                 = format(as.Date(datos$created), "%d/%m/%y")
+    
+    dif.dias              = difftime(Sys.time(), datos$created, units="days") %>%
+                            floor() %>% 
+                            as.vector()
+
+    m.tweets.dia          = datos$statusesCount/dif.dias
+    
+    num.favoritos         = datos$favoritesCount
+    
+    num.amigos            = datos$friendsCount
+    
+    ratio.likes100cuentas = (datos$favoritesCount*100)/datos$friendsCount
+    
+    indicadores.creacion <- data.frame(users, num.tweets, fecha, m.tweets.dia, num.favoritos, num.amigos, ratio.likes100cuentas)
+    names(indicadores.creacion) = c("cuentas", 
+                                    "nº de tweets", 
+                                    "fecha de creación", 
+                                    "media tweets/día", 
+                                    "likes a tweets de otros",
+                                    "nº de friends", 
+                                    "ratio likes/100 friends")
+    
+    return(indicadores.creacion)
+    
+}
+
+###########################################################################################
+# Obtenemos la interaccion con la comunidad en el mes
+###########################################################################################
+
+
+
+
+obtener_interaccion <- function(tweets.cuenta) {
+    lista.retweeteados    <- list()
+    retweets.recibidos    <- c()
+    likes.propios         <- c()
+    m.retweets.propios    <- c()
+    m.retweets.dia        <- c()
+    m.likes.tweet         <- c()
+    m.likes.dia           <- c()
+    m.interacciones.tweet <- c()
+    for (i in 1:length(users)){
+        tweets                   <- tweets.cuenta[[i]]
+        retweets.recibidos[i]    <- sum(tweets$retweet_count)
+        likes.propios[i]         <- sum(tweets$favorite_count[tweets$is_retweet==FALSE])
+        m.retweets.propios[i]    <- mean(tweets$retweet_count[tweets$is_retweet==FALSE])
+        m.retweets.dia[i]        <- sum(tweets$retweet_count)/dias.mes
+        m.likes.tweet[i]         <- sum(tweets$favorite_count)/length(tweets[[i]])
+        m.likes.dia[i]           <- sum(tweets$favorite_count)/dias.mes
+        m.interacciones.tweet[i] <- (sum(tweets$favorite_count)+retweets.recibidos[i])/dias.mes
+    }
+    lista.retweeteados <- tweets.cuenta[[which(users=="generalitat")]] %>% 
+                          top_n(.,top.retweeteados,retweet_count)
+    lista.retweeteados <- lista.retweeteados[1:min(top.retweeteados,nrow(lista.retweeteados)),]
+    
+     
+    interaccion        <- data.frame(users, retweets.recibidos,likes.propios, m.retweets.propios, m.retweets.dia, m.likes.tweet, m.likes.dia, m.interacciones.tweet)
+    names(interaccion) = c("cuentas",
+                           "nº de retweets recibidos", 
+                           "nº de likes recibidos a tweets propios", 
+                           "media retweets/tweet propio", 
+                           "media retweets/día", 
+                           "media de likes/tweets",
+                           "media de likes/día", 
+                           "media de interacciones/tweet")
+    
+    resultado          <- list(interaccion, lista.retweeteados)
+    return(resultado)
+}
+
+###########################################################################################
+# Obtenemos la actividad (en el mes) 
+###########################################################################################
+
+
+obtener_actividad <- function(tweets.cuenta){
+    
+    lista.usuarios       <- list()
+    num.tweets           <- c()
+    m.tweets.dia         <- c()
+    porcentaje.propios   <- c()
+    porcentaje.retweets  <- c()
+    porcentaje.respuesta <- c()
+    
+    for (i in 1:length(users)){
+        tweets                  <- tweets.cuenta[[i]]
+        num.tweets[i]           <- length(tweets[[i]])
+        m.tweets.dia[i]         <- num.tweets[i]/dias.mes
+        porcentaje.propios[i]   <- (sum(tweets$is_retweet==FALSE)/num.tweets[i])*100
+        porcentaje.retweets[i]  <- (sum(tweets$is_retweet==TRUE)/num.tweets[i])*100
+        porcentaje.respuesta[i] <- (sum(tweets$is_quote==TRUE)/num.tweets[i])*100
+    }
+    actividad        <- data.frame(users, num.tweets, m.tweets.dia, porcentaje.propios, porcentaje.retweets, porcentaje.respuesta)
+    names(actividad) = c("cuentas",
+                         "nº de tweets", 
+                         "media tweets/día", 
+                         "% tweets propios", 
+                         "% tweets que son retweets", 
+                         "% tweets que son respuestas")
+    
+    tweets.generalitat <- tweets.cuenta[[which(users=="generalitat")]]
+    
+    usuarios.retweeteados   <- tweets.generalitat[tweets.generalitat$is_retweet==TRUE,] %>% 
+                               group_by(., retweet_status_id) %>% 
+                               summarise(., n()) %>%
+                               arrange(.,`n()`)
+    
+    usuarios.retweeteados   <- usuarios.retweeteados[1:top.usuarios,]
+    resultado        <- list(actividad, usuarios.retweeteados)
+}
