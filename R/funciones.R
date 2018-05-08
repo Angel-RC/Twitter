@@ -4,17 +4,18 @@
 ####
 
 obtener_informacion <- function(seguidores) {
+    
     seguidores.unicos <- seguidores %>% select(user_id) %>% distinct()
-    N          <- length(seguidores.unicos)
-    max.users  <- 90000
-    total.rep  <- ceiling(N / max.users)
-    info.seguidores <- tibble()
+    N                 <- length(seguidores.unicos)
+    max.users         <- 90000
+    total.rep         <- ceiling(N / max.users)
+    info.seguidores   <- tibble()
     
     for (i in 1:total.rep) {
         inicio <- (i - 1) * max.users + 1
         final  <- min(i * max.users, N)
         
-        info.seguidores <- rbind(info.seguidores, lookup_users(seguidores.unicos[inicio:final]))
+        info.seguidores <- rbind(info.seguidores, lookup_users(seguidores.unicos[inicio:final,]))
     }
     
     info.seguidores <- inner_join(info.seguidores, seguidores, by="user_id") %>%  
@@ -28,20 +29,14 @@ obtener_informacion <- function(seguidores) {
 ####
 obtener_menciones <- function(users,N){
     
-    menciones <- list()
-    
-    
-        
-       menciones  = apply( as_tibble(paste("@",users,sep="")), 1,
+           menciones  = apply( as_tibble(paste("@",users,sep="")), 1,
                              search_tweets,
                              n      = 2,
                              lang   = "es",
                              retryonratelimit = TRUE) %>% 
-                    map2( users, cbind)
-                  
-    
-    men <- do.call(rbind, menciones)
-    return(men)
+                        map2( users, cbind) %>% 
+                        do.call(rbind,.)
+    return(menciones)
 }
 
 
@@ -86,7 +81,6 @@ repercusion <- function(users,info.seguidores) {
         return(resultado)
     
 }
-
 
 
 "%!in%" <- function(x, table) match(x, table, nomatch = 0) == 0
