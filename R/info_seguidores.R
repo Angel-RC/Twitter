@@ -2,26 +2,21 @@
 load("datos/historico_seguidores.RData")
 # Obtenemos los seguidores de cada user en un elemento de la lista
 seguidores <- sapply(users ,get_followers, 
-                            n = 30000, 
+                            n                = 3, 
                             retryonratelimit = TRUE,
-                            simplify = FALSE) %>% 
-              
-              map2(users,cbind) %>% 
-              do.call(rbind, .) %>% 
-              rename( origen = ".y[[i]]")
-
-rownames(seguidores) = NULL
-# Obtenemos la informacion de dichos seguidores
-info.seguidores <- obtener_informacion( seguidores) 
+                            simplify         = FALSE) %>% 
+              map2_df(users,cbind) %>% 
+              rename( "cuenta" = ".y[[i]]") %>% 
+              obtener_informacion
 
 # Obtenemos informacion del alcance y repercusion
-nuevo <- repercusion(users, info.seguidores)
+resumen.seg <- repercusion(seguidores)
 
 # Añadimos fecha de extracción
-nuevo$repercusion$extraccion <- format(Sys.Date(), "%d/%m/%y")
+resumen.seg$extraccion <- format(Sys.Date(), "%d/%m/%y")
 
 # Añadimos la nueva informacion al historico
-historico.seguidores <- rbind(historico.seguidores, nuevo$repercusion)
+historico.seguidores <- rbind(historico.seguidores, resumen.seg)
 
 # Guardamos los datos en el historico
 save(historico.seguidores, file = "datos/historico_seguidores.RData")
