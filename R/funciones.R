@@ -22,22 +22,6 @@ obtener_informacion <- function(seguidores) {
     return(info.seguidores)
 }
 
-# Obtener tweets que contienen ciertas palabras
-# -----------------------------------------------------------------------------
-
-obtener_menciones <- function(palabras,N){
-    
-           menciones  = map( palabras,
-                             search_tweets,
-                             n      = N,
-                             lang   = "es",
-                             retryonratelimit = TRUE) %>% 
-                        map2_dfr(palabras, cbind) %>% 
-                        as.tibble() %>% 
-                        rename( "palabra" = ".y[[i]]")
-           
-    return(menciones)
-}
 
 Limpiar_texto <- function(texto) {
 
