@@ -1,8 +1,5 @@
-
-####
 # Extraemos la informacion de los usuarios para cuando tienes mas de 90000
-####
-get_mentions("generalitat")
+# -----------------------------------------------------------------------------
 
 obtener_informacion <- function(seguidores) {
     
@@ -25,9 +22,9 @@ obtener_informacion <- function(seguidores) {
     return(info.seguidores)
 }
 
-####
 # Obtener tweets que contienen ciertas palabras
-####
+# -----------------------------------------------------------------------------
+
 obtener_menciones <- function(palabras,N){
     
            menciones  = map( palabras,
@@ -52,9 +49,8 @@ Limpiar_texto <- function(texto) {
 }
 
 
-####
 # Calculamos la informacion de repercusion y lista de seguidores top activos e influyentes
-#
+# ----------------------------------------------------------------------------------------
 
 repercusion <- function(info.seguidores) {
 
@@ -71,10 +67,9 @@ repercusion <- function(info.seguidores) {
     
 }
 
-
-####
 # Obtenemos los indicadores de las cuentas por meses
-####
+# -----------------------------------------------------------------------------
+
 
 indicadores_cuentas <- function (cuentas){
     
@@ -92,10 +87,8 @@ indicadores_cuentas <- function (cuentas){
     
 }
 
-
-####
 # Obtenemos los indicadores de los tweets por meses y el filtro que queramos
-####
+# -----------------------------------------------------------------------------
 
 indicadores_tweets <- function(tweets, filtro = "screen_name"){
     
@@ -116,9 +109,8 @@ indicadores_tweets <- function(tweets, filtro = "screen_name"){
     return(indicadores)
 }
 
-####
 # Obtenemos los indicadores de las menciones por meses y el filtro que queramos
-####
+# -----------------------------------------------------------------------------
 
 indicadores_menciones <- function(menciones, filtro, periodo="month") {
     
