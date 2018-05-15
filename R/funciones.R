@@ -74,22 +74,20 @@ indicadores_cuentas <- function (cuentas){
 # Obtenemos los indicadores de los tweets por meses y el filtro que queramos
 # -----------------------------------------------------------------------------
 
-indicadores_tweets <- function(tweets, filtro = "screen_name"){
+indicadores_tweets <- function(tweets, filtro = "users"){
     
-    tweets <- left_join(tweets,usuarios, by = c("screen_name" = "users"))
-    colnames(tweets)[ colnames(tweets) == filtro] = "filtro"
-    
-    indicadores <- group_by(tweets, filtro, mes = floor_date(created_at,"month")) %>% 
-                   summarise(n.tweets                  = n() ,
-                             n.tweets.propios          = sum(is_retweet == FALSE),
-                             n.tweets.retweets         = sum(is_retweet == TRUE),
-                             n.tweets.respuestas       = sum(!is.na(reply_to_user_id)),
-                             n.retweets                = sum(retweet_count),
-                             n.like                    = sum(favorite_count),
-                             n.like.tweets.propios     = sum(favorite_count[is_retweet == FALSE]),
-                             n.retweets.tweets.propios = sum(retweet_count[is_retweet == FALSE])) %>% 
-                   ungroup()
-    colnames(indicadores)[ colnames(indicadores) == "filtro"] = filtro
+indicadores <- right_join(usuarios, tweets, by = c("users" = "screen_name")) %>% 
+               group_by(mes = floor_date(created_at, "month")) %>% 
+               group_by_(filtro, add = TRUE) %>% 
+               summarise(n.tweets                  = n() ,
+                         n.tweets.propios          = sum(is_retweet == FALSE),
+                         n.tweets.retweets         = sum(is_retweet == TRUE),
+                         n.tweets.respuestas       = sum(!is.na(reply_to_user_id)),
+                         n.retweets                = sum(retweet_count),
+                         n.like                    = sum(favorite_count),
+                         n.like.tweets.propios     = sum(favorite_count[is_retweet == FALSE]),
+                         n.retweets.tweets.propios = sum(retweet_count[is_retweet == FALSE])) %>% 
+              ungroup()
     return(indicadores)
 }
 
@@ -98,15 +96,14 @@ indicadores_tweets <- function(tweets, filtro = "screen_name"){
 
 indicadores_menciones <- function(menciones, filtro, periodo="month") {
     
-    menciones <- left_join(menciones, usuarios, by = c("cuentas" = "users"))
-    colnames(menciones)[ colnames(menciones) == filtro] = "filtro"
-    
-    indicadores <- group_by(menciones, filtro, periodo = floor_date(created_at,periodo)) %>% 
-                   summarise( n.menciones           = n(),
-                              n.menciones.propias   = sum(!is_retweet),
-                              n.menciones.retweets  = sum(is_retweet),
-                              n.usuarios            = length(table(user_id)),
-                              n.likes               = sum(favorite_count))
+  indicadores <- inner_join( usuarios, menciones, by = c("mencion" = "query")) %>% 
+                 group_by( periodo = floor_date(created_at, periodo)) %>% 
+                 group_by_( filtro, add = TRUE) %>% 
+                 summarise( n.menciones           = n(),
+                            n.menciones.propias   = sum(!is_retweet),
+                            n.menciones.retweets  = sum(is_retweet),
+                            n.usuarios            = length(table(user_id)),
+                            n.likes               = sum(favorite_count))
     
     return(indicadores)
     
