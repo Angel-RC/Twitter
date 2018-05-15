@@ -30,7 +30,7 @@ grupos = c("Generalitat",
            "Servef",
            "Aivaj")
 
-usuarios <- tibble(users, grupos)
+usuarios <- tibble(users, mencion=paste("@",users,sep=""), grupos)
 
 mes               <- month(Sys.Date())
 dias.mes.anterior <- days_in_month(mes-1)
