@@ -2,6 +2,7 @@
 library("ROAuth")
 library("twitteR")
 library("rtweet")
+library("forecast")
 library("tidyverse")
 library("xlsx")
 library("tm")
@@ -16,5 +17,8 @@ library("readxl")
 library("knitr")
 library("lubridate")
 library("kableExtra")
-
+library("tseries")
+library("zoo")
+library("ggfortify")
+library("ggplot2")
 

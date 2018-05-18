@@ -1,10 +1,10 @@
 # Obtenemos el historico de tweets 
 load("datos/historico_tweets.RData")
+
 # Obtenemos la ultima informacion de los ultimos tweets
 tweets.nuevos <- get_timeline(user = users,
-                              n    = 3,
+                              n    = 300,
                               home = FALSE) %>% 
-                 filter(created_at < primer.dia.mes) %>% 
                  mutate(text         = Limpiar_texto(text),
                         retweet_text = Limpiar_texto(retweet_text),
                         extraccion   = Sys.Date())

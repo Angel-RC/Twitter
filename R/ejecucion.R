@@ -13,13 +13,18 @@ source("R/variables_globales.R")
 source("R/funciones.R")
 
 # Fase 1. Extraccion de datos desde la api
-source("R/info_users.R")
-source("R/info_tweets.R")
-source("R/info_seguidores.R")
-source("R/info_menciones.R")
+source("R/extraccion_cuentas.R")
+source("R/extraccion_tweets.R")
+source("R/extraccion_seguidores.R")
+source("R/extraccion_menciones.R")
 
+# Fase 2. Obtenemos informacion desde los datos ya obtenidos
+source("R/informacion_cuentas.R")
+source("R/informacion_tweets.R")
+source("R/informacion_seguidores.R")
+source("R/informacion_menciones.R")
 
-# Fase 2. Realizamos el informe
+# Fase 3. Realizamos el informe
 source("informes/informe_provisional.Rmd")
 
 

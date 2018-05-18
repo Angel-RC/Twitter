@@ -25,7 +25,7 @@ obtener_informacion <- function(seguidores) {
 
 Limpiar_texto <- function(texto) {
 
-    nice.str <- iconv(texto,'UTF-8','latin1', sub = NA) %>%
+    nice.str <- iconv(texto,'UTF-8','latin1', sub = '') %>%
                 gsub("[[:space:]]"," ",.) %>% 
                 tolower
     
@@ -33,10 +33,10 @@ Limpiar_texto <- function(texto) {
 }
 
 
-# Calculamos la informacion de repercusion y lista de seguidores top activos e influyentes
+# Calculamos la informacion de repercusion de cada usuario segun sus seguidores
 # ----------------------------------------------------------------------------------------
 
-repercusion <- function(info.seguidores) {
+resumen_seguidores <- function(info.seguidores) {
 
     resultado   <-  group_by(info.seguidores, cuenta) %>% 
                     summarise(n.seguidores    = n(),
@@ -58,14 +58,15 @@ repercusion <- function(info.seguidores) {
 indicadores_cuentas <- function (cuentas){
     
  indicadores <- transmute(cuentas, users               = name,
-                                   mes                 = format(extraccion, "%b %y"),
-                                   n.tweets            = statusesCount,
-                                   n.seguidores        = followersCount,
-                                   creacion            = format(created, "%d/%m/%y"),
-                                   dias.creacion       = (Sys.time() - created) %>% as.integer(),
-                                   n.favoritos         = favoritesCount,
-                                   n.amigos            = friendsCount,
-                                   ratio.likes.cuentas = favoritesCount*100/friendsCount)
+                                   mes                 = mes,
+                                   n.tweets            = statuses_count,
+                                   n.seguidores        = followers_count,
+                                   n.favoritos         = favourites_count,
+                                   n.amigos            = friends_count,
+                                   n.listas            = listed_count,
+                                   ratio.likes.cuentas = round(favourites_count * 100 / friends_count, 2),
+                                   creacion            = account_created_at,
+                                   dias.creacion       = (Sys.time() - account_created_at) %>% as.integer())
     
     return(indicadores)
     
@@ -94,7 +95,7 @@ indicadores <- right_join(usuarios, tweets, by = c("users" = "screen_name")) %>%
 # Obtenemos los indicadores de las menciones por meses y el filtro que queramos
 # -----------------------------------------------------------------------------
 
-indicadores_menciones <- function(menciones, filtro, periodo="month") {
+indicadores_menciones <- function(menciones, filtro, periodo = "month") {
     
   indicadores <- inner_join( usuarios, menciones, by = c("mencion" = "query")) %>% 
                  group_by( periodo = floor_date(created_at, periodo)) %>% 
@@ -109,4 +110,26 @@ indicadores_menciones <- function(menciones, filtro, periodo="month") {
     
 }
 
+
+# Obtenemos las series correspondientes para el data.frame 
+# -----------------------------------------------------------------------------
+obtener.series <- function(datos,tipo) {
+    
+    if(tipo == "users"){
+        
+    vector <- c("followers_count",
+                "friends_count",
+                "listed_count",
+                "statuses_count",
+                "favourites_count")
+    
+    inicio <- min(historico.cuentas$extraccion)
+    
+    }
+    
+    serie.temporal <-  ts(tabla.final[, vector], 
+                          start = c(year(inicio), month(inicio)), 
+                          frequency = 12)
+    return(serie.temporal)
+}
 

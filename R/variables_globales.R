@@ -13,7 +13,9 @@ users = c("generalitat",
           "GVAhabitatge",
           "GVAoberta",
           "GVAservef",
-          "GVAivaj")
+          "GVAivaj",
+          "ChicoteAngel")
+
 # Agrupacion de las cuentas
 grupos = c("Generalitat",
            "Palau",
@@ -28,9 +30,12 @@ grupos = c("Generalitat",
            "Habitage",
            "Transparencia",
            "Servef",
-           "Aivaj")
+           "Aivaj",
+           "ChicoteAngel")
 
-usuarios <- tibble(users, mencion=paste("@",users,sep=""), grupos)
+usuarios <- tibble(users, 
+                   mencion = paste("@",users,sep=""), 
+                   grupos)
 
 mes               <- month(Sys.Date())
 dias.mes.anterior <- days_in_month(mes-1)
