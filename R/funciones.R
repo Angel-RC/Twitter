@@ -127,7 +127,7 @@ obtener.series <- function(datos,tipo) {
     
     }
     
-    serie.temporal <-  ts(tabla.final[, vector], 
+    serie.temporal <-  ts(datos[, vector], 
                           start = c(year(inicio), month(inicio)), 
                           frequency = 12)
     return(serie.temporal)

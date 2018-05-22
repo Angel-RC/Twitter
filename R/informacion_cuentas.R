@@ -1,5 +1,9 @@
-# Solo se vera informacion de estos usuarios
-filtro.usuarios <- c("generalitat","ChicoteAngel")
+# Filtros
+filtro.usuarios <- c("generalitat",
+                     "ChicoteAngel")
+
+filtro.fecha.inicio <- as_date("2018-04-18")
+filtro.fecha.final  <- as_date("2018-06-18")
 
 # Obtenemos la informacion de los usuarios deseados
 cuentas.filtradas <- historico.cuentas %>% filter(screen_name %in% filtro.usuarios) 

@@ -3,7 +3,7 @@ load("datos/historico_tweets.RData")
 
 # Obtenemos la ultima informacion de los ultimos tweets
 tweets.nuevos <- get_timeline(user = users,
-                              n    = 300,
+                              n    = 99900,
                               home = FALSE) %>% 
                  mutate(text         = Limpiar_texto(text),
                         retweet_text = Limpiar_texto(retweet_text),
