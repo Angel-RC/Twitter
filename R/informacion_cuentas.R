@@ -2,7 +2,7 @@
 filtro.usuarios <- c("generalitat",
                      "ChicoteAngel")
 
-filtro.fecha.inicio <- as_date("2018-04-18")
+filtro.fecha.inicio <- as_date("2018-03-18")
 filtro.fecha.final  <- as_date("2018-06-18")
 
 # Obtenemos la informacion de los usuarios deseados
@@ -20,7 +20,7 @@ cuentas.separadas <- cuentas.filtradas %>% nest(-screen_name)
 # Obtengo las series para cada usuario
 series <- map(cuentas.separadas$data, obtener.series, tipo = "users")
 
-if(length(series)==1) series <- series[[1]]
+if(length(series) == 1) series <- series[[1]]
 
 # Pintamos las series temporales para los usuarios por separado
 autoplot(series, 
@@ -28,5 +28,3 @@ autoplot(series,
          ts.colour   = "black", 
          ts.geom     = "line",
          facets      = TRUE)
-
-

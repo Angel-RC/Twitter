@@ -16,8 +16,7 @@ obtener_informacion <- function(seguidores) {
         info.seguidores <- rbind(info.seguidores, lookup_users(seguidores.unicos[inicio:final,]))
     }
     
-    info.seguidores <- inner_join(info.seguidores, seguidores, by="user_id") %>%  
-                       arrange(statuses_count)
+    info.seguidores <- inner_join(info.seguidores, seguidores, by="user_id")
     
     return(info.seguidores)
 }
@@ -113,7 +112,8 @@ indicadores_menciones <- function(menciones, filtro, periodo = "month") {
 
 # Obtenemos las series correspondientes para el data.frame 
 # -----------------------------------------------------------------------------
-obtener.series <- function(datos,tipo) {
+
+obtener_series <- function(datos,tipo) {
     
     if(tipo == "users"){
         
@@ -133,3 +133,20 @@ obtener.series <- function(datos,tipo) {
     return(serie.temporal)
 }
 
+
+
+# Aplicamos filtros a los historicos para hacer busquedas mas concretas
+# -----------------------------------------------------------------------------
+
+aplicar_filtros <- function(datos, filtros) {
+    
+    datos2 <- datos %>% inner_join(usuarios, by = c("screen_name" = "users")) %>% 
+                        filter(screen_name %in% filtros$usuarios) %>% 
+                        filter(grupos %in% filtros$grupos)
+                        filter(between(extraccion, filtros$extraccion.inicio, filtros$extraccion.final)) %>% 
+                        filter(between(as_date(match("created_at")), filtros$creacion.inicio, filtros$creacion.final))
+              
+    
+    
+    
+}
