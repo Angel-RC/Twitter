@@ -1,5 +1,5 @@
 # Extraemos la informacion de los usuarios para cuando tienes mas de 90000
-# -----------------------------------------------------------------------------
+# ··············································································
 
 obtener_informacion <- function(seguidores) {
     
@@ -33,7 +33,7 @@ Limpiar_texto <- function(texto) {
 
 
 # Calculamos la informacion de repercusion de cada usuario segun sus seguidores
-# ----------------------------------------------------------------------------------------
+# ····················································································
 
 resumen_seguidores <- function(info.seguidores) {
 
@@ -51,7 +51,7 @@ resumen_seguidores <- function(info.seguidores) {
 }
 
 # Obtenemos los indicadores de las cuentas por meses
-# -----------------------------------------------------------------------------
+# ··············································································
 
 
 indicadores_cuentas <- function (cuentas){
@@ -72,7 +72,7 @@ indicadores_cuentas <- function (cuentas){
 }
 
 # Obtenemos los indicadores de los tweets por meses y el filtro que queramos
-# -----------------------------------------------------------------------------
+# ··············································································
 
 indicadores_tweets <- function(tweets, filtro = "users"){
     
@@ -92,7 +92,7 @@ indicadores <- right_join(usuarios, tweets, by = c("users" = "screen_name")) %>%
 }
 
 # Obtenemos los indicadores de las menciones por meses y el filtro que queramos
-# -----------------------------------------------------------------------------
+# ··············································································
 
 indicadores_menciones <- function(menciones, filtro, periodo = "month") {
     
@@ -111,7 +111,7 @@ indicadores_menciones <- function(menciones, filtro, periodo = "month") {
 
 
 # Obtenemos las series correspondientes para el data.frame 
-# -----------------------------------------------------------------------------
+# ··············································································
 
 obtener_series <- function(datos,tipo) {
     
@@ -136,7 +136,7 @@ obtener_series <- function(datos,tipo) {
 
 
 # Aplicamos filtros a los historicos para hacer busquedas mas concretas
-# -----------------------------------------------------------------------------
+# ··············································································
 
 aplicar_filtros <- function(datos, filtros) {
     

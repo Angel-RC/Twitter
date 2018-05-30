@@ -2,11 +2,11 @@
 load("datos/historico_seguidores.RData")
 
 # Obtenemos los seguidores de cada usuario
-seguidores <- map(users, get_followers, 
-                         n                = 141284, 
-                         retryonratelimit = TRUE) %>% 
-              map2_df(users, cbind) %>% 
-              rename( "cuenta" = ".y[[i]]")
+seguidores <- users %>% map( get_followers, 
+                             n                = 141284, 
+                             retryonratelimit = TRUE) %>% 
+                        map2_df(users, cbind) %>% 
+                        rename( "cuenta" = ".y[[i]]")
 
 info.seguidores <- obtener_informacion(seguidores)
 
