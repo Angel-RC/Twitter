@@ -1,7 +1,22 @@
 
-library(shinydashboard)
-library(dashboardthemes)
-library(tidyverse)
+source("../R/librerias.R")
+source("funciones.R")
+
+
+# Cargamos los datos
+load("../datos/historico_cuentas.RData")
+load("../datos/historico_seguidores.RData")
+load("../datos/historico_tweets.RData")
+load("../datos/historico_menciones.RData")  
+
+# Limpiamos los datos quitando las columnas que son listas
+historico.tweets <- historico.tweets %>% select(-ends_with("coords")) %>% 
+                                         select(-c(hashtags:mentions_screen_name))
+
+
+historico.menciones <- historico.menciones %>% select(-ends_with("coords")) %>% 
+                                               select(-c(hashtags:mentions_screen_name))
+
 # Barra lateral ----
 # ·······························································································
 sidebar <- dashboardSidebar(
@@ -43,10 +58,10 @@ pagina.1 <- tabItem("Visualisation",
                 # Primera fila
                 fluidRow(
                     
-                    box(title = "Temperature over the last month", plotOutput("temp", height = 300), 
+                    box(title = "Número de tweets", plotOutput("temp", height = 300), 
                         width = 6),
                     
-                    box(title = "Daily rainfall over the last month", plotOutput("rain", height = 300),
+                    box(title = "Número de ", plotOutput("rain", height = 300),
                         width = 6)
                     
                 ),
@@ -70,36 +85,36 @@ pagina.1 <- tabItem("Visualisation",
 pagina.2 <- tabItem("Data", 
                   
                     sidebarLayout(
-                        sidebarPanel( width = 3,
-                            conditionalPanel(
-                            'input.Tabla === "Usuarios"',
-                            checkboxGroupInput(inputId  = "show_usuarios", 
-                                               label    = "Columnas disponibles:",
-                                               choices  = names(diamonds), 
-                                               selected = names(diamonds))
+                        sidebarPanel( width = 2,
+                            conditionalPanel('input.Tabla === "Información Cuentas"',
+                            
+                                             show_columnas(historico.cuentas,"show_cuentas")
                             ),
-                            conditionalPanel(
-                                'input.Tabla === "Tweets"',
-                                checkboxGroupInput(inputId  = "show_tweets", 
-                                                   label    = "Columnas disponibles:",
-                                                   choices  = names(diamonds), 
-                                                   selected = names(diamonds)),
-                                helpText("Display 5 records by default.")
+                            
+                            conditionalPanel('input.Tabla === "Información Tweets"',
+                                
+                                             show_columnas(historico.tweets,"show_tweets")
                             ),
-                            conditionalPanel(
-                                'input.Tabla === "Menciones"',
-                                helpText("Display 5 records by default.")
+                           
+                            conditionalPanel('input.Tabla === "Información Menciones"',
+                                             
+                                             show_columnas(historico.menciones,"show_menciones")
+                            ),
+                            
+                            conditionalPanel('input.Tabla === "Información Seguidores"',
+                                             
+                                             show_columnas(historico.seguidores,"show_seguidores")
                             )
                         ),
                     
                         mainPanel(
                             navbarPage(
                             id = 'Tabla',
-                            title = 'DataTable Options',
-                            tabPanel('Usuarios',     DT::dataTableOutput('ex1')),
-                            tabPanel('Tweets',        DT::dataTableOutput('ex2')),
-                            tabPanel('Menciones',      DT::dataTableOutput('ex3')),
-                            tabPanel('Seguidores',       DT::dataTableOutput('ex4'))
+                            title = 'Datos disponibles',
+                            tabPanel('Información Cuentas',     DT::dataTableOutput('tb1')),
+                            tabPanel('Información Tweets',      DT::dataTableOutput('tb2')),
+                            tabPanel('Información Menciones',   DT::dataTableOutput('tb3')),
+                            tabPanel('Información Seguidores',  DT::dataTableOutput('tb4'))
                             )
                         )
                       )

@@ -4,7 +4,8 @@ shinyServer(function(input, output, session) {
 
 # Datos ----
 # ·······························································································
-      
+ 
+    
    startTime <- as.numeric(Sys.time())
    
    weatherData <- reactive({
@@ -80,10 +81,12 @@ shinyServer(function(input, output, session) {
                 color    = "orange")
    })
    
-   output$ex1 <- DT::renderDataTable(mostrar_datos(diamonds, input$show_usuarios))
+   # Creamos las tablas de datos
+   output$tb1 <- DT::renderDataTable(show_tabla(historico.cuentas,    input$show_cuentas))
+   output$tb2 <- DT::renderDataTable(show_tabla(historico.tweets,     input$show_tweets))
+   output$tb3 <- DT::renderDataTable(show_tabla(historico.menciones,  input$show_menciones))
+   output$tb4 <- DT::renderDataTable(show_tabla(historico.seguidores, input$show_seguidores))
    
-   # -1 means no pagination; the 2nd element contains menu labels
-   output$ex2 <- DT::renderDataTable(mostrar_datos(diamonds, input$show_tweets))
    
 }
 )
