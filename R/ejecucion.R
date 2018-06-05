@@ -1,4 +1,4 @@
-# Aqui esta todo el codigo necesario para extraer informacion de Twitter
+
 #
 # Autor: Angel Y Lara 
 # Date:  19/12/2017
