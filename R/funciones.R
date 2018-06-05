@@ -138,7 +138,7 @@ obtener_series <- function(datos,tipo) {
 # Aplicamos filtros a los historicos para hacer busquedas mas concretas
 # ··············································································
 
-aplicar_filtros <- function(datos, filtros) {
+aplicar_filtros = function(datos, filtros) {
     
     datos2 <- datos %>% inner_join(usuarios, by = c("screen_name" = "users")) %>% 
                         filter(screen_name %in% filtros$usuarios) %>% 

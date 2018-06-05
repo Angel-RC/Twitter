@@ -1,6 +1,6 @@
 # Aqui esta todo el codigo necesario para extraer informacion de Twitter
 #
-# Autor: Angel Y Lara (RIP)
+# Autor: Angel Y Lara 
 # Date:  19/12/2017
 # 
 # A lo largo del codigo aparecera la etiqueta #TO.DO cuando parte del codigo necesite ser revisado

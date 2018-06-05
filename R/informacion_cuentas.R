@@ -1,5 +1,5 @@
 # Filtros
-filtro.usuarios <- c("generalitat",
+filtro.usuarios <- c("generalitat"
                      "ChicoteAngel")
 
 filtro.fecha.inicio <- as_date("2018-03-18")
