@@ -1,21 +1,32 @@
 
-show_tabla <- function(datos, filtro.column = names(datos)) {
+show_tabla <- function(datos, fijar = 0) {
     
-    res <- DT::datatable(datos[, filtro.column, drop = FALSE], 
-                         options = list(
-                         lengthMenu = list(c(10, 25, 50, 100, -1), c('10', '25', '50', '100', 'All')),
-                         pageLength = 10,
-                         scrollX = TRUE)
+    res <- DT::datatable(select_if(datos,negate(is.list)), 
+                         rownames   = FALSE,
+                         extensions = c('ColReorder',
+                                        'Buttons',
+                                        'FixedColumns',
+                                        'FixedHeader',
+                                        'Scroller'),
+                         
+                         options    = list(
+                                           fixedHeader  = TRUE,
+                                           dom          = 'Bfrtip',
+                                           fixedColumns = list(leftColumns = fijar),
+                                           pageLength   = 300,
+                                           scrollY      = "500px",
+                                           scrollX      = TRUE,
+                                           colReorder   = TRUE,
+                                           buttons = list('colvis','copy', list(extend  = 'collection',
+                                                                                buttons = c('csv', 'pdf'),
+                                                                                text    = 'Download'))
+                                           )
     )
     return(res)
 }
 
 
 
-show_columnas <- function(datos,id) {
-    checkboxGroupInput(inputId  = id,
-                       label    = "Columnas disponibles:",
-                       choices  = names(datos), 
-                       selected = names(datos))
-}
+
+
 

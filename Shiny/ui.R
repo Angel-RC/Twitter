@@ -9,7 +9,7 @@ load("../datos/historico_seguidores.RData")
 load("../datos/historico_tweets.RData")
 load("../datos/historico_menciones.RData")  
 
-# Limpiamos los datos quitando las columnas que son listas
+# Limpiamos los datos quitando las columnas que son listsa
 historico.tweets <- historico.tweets %>% select(-ends_with("coords")) %>% 
                                          select(-c(hashtags:mentions_screen_name))
 
@@ -84,30 +84,7 @@ pagina.1 <- tabItem("Visualisation",
 # ······························································································· 
 pagina.2 <- tabItem("Data", 
                   
-                    sidebarLayout(
-                        sidebarPanel( width = 2,
-                            conditionalPanel('input.Tabla === "Información Cuentas"',
-                            
-                                             show_columnas(historico.cuentas,"show_cuentas")
-                            ),
-                            
-                            conditionalPanel('input.Tabla === "Información Tweets"',
-                                
-                                             show_columnas(historico.tweets,"show_tweets")
-                            ),
-                           
-                            conditionalPanel('input.Tabla === "Información Menciones"',
-                                             
-                                             show_columnas(historico.menciones,"show_menciones")
-                            ),
-                            
-                            conditionalPanel('input.Tabla === "Información Seguidores"',
-                                             
-                                             show_columnas(historico.seguidores,"show_seguidores")
-                            )
-                        ),
-                    
-                        mainPanel(
+                    mainPanel(
                             navbarPage(
                             id = 'Tabla',
                             title = 'Datos disponibles',
@@ -116,18 +93,25 @@ pagina.2 <- tabItem("Data",
                             tabPanel('Información Menciones',   DT::dataTableOutput('tb3')),
                             tabPanel('Información Seguidores',  DT::dataTableOutput('tb4'))
                             )
-                        )
                       )
                     
                     
 )
-
+pagina.3 <- tabItem("readme", 
+                    mainPanel(
+                        id = 'Ta',
+                        title = 'Datos dgfdisponibles',
+                        tabPanel('Información gfhCuentas',      DT::dataTableOutput('a'))
+                  
+                    )
+)
 # Cuerpo ----
 # ·······························································································
 body <- dashboardBody(
     tabItems(
           pagina.1, 
-          pagina.2
+          pagina.2,
+          pagina.3
     )
 ) 
 # Ejecucion ----
