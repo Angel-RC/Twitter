@@ -17,9 +17,10 @@ show_tabla <- function(datos, fijar = 0) {
                                            scrollY      = "500px",
                                            scrollX      = TRUE,
                                            colReorder   = TRUE,
-                                           buttons = list('colvis','copy', list(extend  = 'collection',
-                                                                                buttons = c('csv', 'pdf'),
-                                                                                text    = 'Download'))
+                                           buttons = list('colvis','copy', list(extend   = 'collection',
+                                                                                buttons  = c('csv', 'pdf'),
+                                                                                text     = 'Download',
+                                                                                filename = 'test'))
                                            )
     )
     return(res)

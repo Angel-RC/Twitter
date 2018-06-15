@@ -1,1 +1,1 @@
-{"active_set":"","sets":[]}
+{"active_set":"Diagnostics","sets":[{"base_path":"","markers":[{"column":22,"line":2,"log_line":-1,"log_path":"","message":"expected &#x27;,&#x27; after expression","path":"C:/Users/D06279689E/Desktop/PRE/R/informacion_cuentas.R","show_error_list":true,"type":0}],"name":"Diagnostics"}]}

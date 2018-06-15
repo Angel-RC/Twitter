@@ -3,7 +3,7 @@ load("datos/historico_menciones.RData")
 
 # Obtenemos la ultima informacion de las ultimas menciones
 menciones.nuevas = search_tweets2(q                = usuarios$mencion, 
-                                  n                = N,     
+                                  n                = 99999,     
                                   lang             = "es",
                                   include_rts      = TRUE,
                                   retryonratelimit = TRUE) 

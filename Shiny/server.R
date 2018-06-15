@@ -16,7 +16,7 @@ shinyServer(function(input, output, session) {
        
        read.csv("Data/weatherdata.csv") %>%
            slice(1:N) %>%
-           mutate(Dates = as.POSIXct(Dates)) %>%
+           mutate(Dates = as.POSIXct(Dates)) %%>
            slice((n()-30):n())
        
    })
@@ -81,24 +81,12 @@ shinyServer(function(input, output, session) {
                 color    = "orange")
    })
    
-   # Creamos las tablas de datos
-   output$tb1 <- DT::renderDataTable(show_tabla(historico.cuentas))
+   # Tablas para visualizar
+   output$tb1 <- DT::renderDataTable({show_tabla(historico.cuentas)})
    output$tb2 <- DT::renderDataTable(show_tabla(historico.tweets))
    output$tb3 <- DT::renderDataTable(show_tabla(historico.menciones))
    output$tb4 <- DT::renderDataTable(show_tabla(historico.seguidores))
    
-   output$a <- DT::renderDataTable(DT::datatable(
-       iris,
-       extensions = 'Buttons', options = list(
-           dom = 'Bfrtip',
-           buttons = 
-               list('copy', 'print', list(
-                   extend = 'collection',
-                   buttons = c('csv', 'excel', 'pdf'),
-                   text = 'Download'
-               ))
-           
-       ))
-   )
+  
 }
 )

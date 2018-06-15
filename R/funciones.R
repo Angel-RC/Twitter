@@ -147,6 +147,4 @@ aplicar_filtros = function(datos, filtros) {
                         filter(between(as_date(match("created_at")), filtros$creacion.inicio, filtros$creacion.final))
               
     
-    
-    
 }
