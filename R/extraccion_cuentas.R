@@ -1,6 +1,3 @@
-# Obtenemos la informacion de historico
-load("datos/historico_cuentas.RData")
-
 # Extraemos la información de los users
 cuentasGVA <- lookup_users(users) 
 

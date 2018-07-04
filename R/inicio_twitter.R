@@ -2,9 +2,9 @@
 # nombre de la app
 appname <- "R en Twitter"
 # api key
-key     <- "NvzzcGwdz7Y8Be9AcCzLpkL3l"
+key     <- "LbNF0Fe3dWqFnEHhmqVr0NaGT"
 # api secret 
-secret  <- "Mn8kf4a8NWw2eEGoDlPEPVSugXLx6h3jN3c6BlW82vmYRGwXuc"
+secret  <- "k4kYkU3ZfwcO0nTKWP55F5VgU3s7CwF8yFq2V5xcEoffTNJ9hU"
 
 # generamos los token
 twitter_token <- create_token( app             = appname,

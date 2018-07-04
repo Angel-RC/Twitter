@@ -3,7 +3,7 @@
 
 obtener_informacion <- function(seguidores) {
     
-    seguidores.unicos <- seguidores %>% select(user_id) %>% distinct()
+    seguidores.unicos <- seguidores %>% select(user_id) %>% unique()
     N                 <- dim(seguidores.unicos)[1]
     max.users         <- 90000
     total.rep         <- ceiling(N / max.users)
@@ -13,7 +13,7 @@ obtener_informacion <- function(seguidores) {
         inicio <- (i - 1) * max.users + 1
         final  <- min(i * max.users, N)
         
-        info.seguidores <- rbind(info.seguidores, lookup_users(seguidores.unicos[inicio:final,]))
+        info.seguidores <- bind_rows(info.seguidores, lookup_users(seguidores.unicos[inicio:final,]))
     }
     
     info.seguidores <- inner_join(info.seguidores, seguidores, by="user_id")
@@ -65,7 +65,7 @@ indicadores_cuentas <- function (cuentas){
                                    n.listas            = listed_count,
                                    ratio.likes.cuentas = round(favourites_count * 100 / friends_count, 2),
                                    creacion            = account_created_at,
-                                   dias.creacion       = (Sys.time() - account_created_at) %>% as.integer())
+                                   dias.creacion       = (extraccion - as.Date(account_created_at)) %>% as.integer())
     
     return(indicadores)
     
@@ -127,7 +127,7 @@ obtener_series <- function(datos,tipo) {
     
     }
     
-    serie.temporal <-  ts(datos[, vector], 
+    serie.temporal <-  ts(datos %>% select(vector), 
                           start = c(year(inicio), month(inicio)), 
                           frequency = 12)
     return(serie.temporal)

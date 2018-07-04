@@ -1,6 +1,3 @@
-# Obtenemos el historico de tweets 
-load("datos/historico_tweets.RData")
-
 # Obtenemos la ultima informacion de los ultimos tweets
 tweets.nuevos <- get_timeline(user = users,
                               n    = 99900,

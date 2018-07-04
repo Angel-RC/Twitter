@@ -37,17 +37,19 @@ usuarios <- tibble(users,
                    mencion = paste("@",users,sep=""), 
                    grupos)
 
+
+
 mes               <- month(Sys.Date())
 dias.mes.anterior <- days_in_month(mes-1)
 primer.dia.mes    <- floor_date(Sys.Date(), "month")
 
 # Ciudades en las que estan disponibles los trends junto con su id
-#locs <- availableTrendLocations()
-#
+locs <- availableTrendLocations()
+
 ## Id de España y Valencia
-#locsSpain  <- subset( locs, country == "Spain")
-#idSpain    <- subset( locsSpain, name == "Spain")$woeid
-#idValencia <- subset( locsSpain, name == "Valencia")$woeid
+locsSpain  <- subset( locs, country == "Spain")
+idSpain    <- subset( locsSpain, name == "Spain")$woeid
+idValencia <- subset( locsSpain, name == "Valencia")$woeid
 
 
 
@@ -60,3 +62,10 @@ top.activos      <- 20
 top.influyentes  <- 20
 top.retweeteados <- 20
 top.usuarios     <- 20
+
+
+# Datos historicos
+load("datos/historico_seguidores.RData")
+load("datos/historico_tweets.RData")
+load("datos/historico_cuentas.RData")
+load("datos/historico_menciones.RData")

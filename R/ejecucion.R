@@ -1,4 +1,3 @@
-
 #
 # Autor: Angel Y Lara 
 # Date:  19/12/2017
@@ -69,74 +68,5 @@ dev.off()
 
 #############################################################################################
 
-
-
-
-#Codigo R_Cuentas y tweets                                                                                      
-
-
-# Obtenemos informacion de los usuarios 
-cuentasGVA <- lookupUsers(users)
-cuentasGVA_df<-twListToDF(cuentasGVA)
-
-## lara
-# 1.ACTIVIDAD (VOLUMEN)
-
-##En el mes
-
-
-##Desde la creacion de la cuenta
-
-recuento_tweets              = cuentasGVA_df$statusesCount 
-
-fecha_creacion_cuenta        = as.Date(cuentasGVA_df$created)
-
-dif_dias=difftime(Sys.time(), cuentasGVA_df$created, units="days") #Cuantos dias han transcurrido a fecha de hoy desde la creación de la cuenta
-dif_dias2=floor(dif_dias) #dias es una unidad entera
-diferencia_dias=as.vector(dif_dias2)
-
-media_tweets_dia             = cuentasGVA_df$statusesCount/diferencia_dias
-
-recuento_likes_atweetsotros  = cuentasGVA_df$favoritesCount
-
-recuento_cuentas_sigue       = cuentasGVA_df$friendsCount
-
-ratio_likes_100cuentas       = (cuentasGVA_df$favoritesCount*100)/cuentasGVA_df$friendsCount
-
-
-tabla=rbind(recuento_tweets,fecha_creacion_cuenta,media_tweets_dia,recuento_likes_atweetsotros,recuento_cuentas_sigue,ratio_likes_100cuentas)
-colnames(tabla, do.NULL = FALSE)
-colnames(tabla) <- c("generalitat",
-                     "palauGVA",
-                     "GVAinclusio",
-                     "GVAhisenda",
-                     "GVAjusticia",
-                     "GVAeducacio",
-                     "GVAculturesport",
-                     "GVAsanitat",
-                     "GVAeconomia",
-                     "GVAagroambient",
-                     "GVAhabitatge",
-                     "GVAoberta",
-                     "GVAservef",
-                     "GVAivaj")
-rownames(tabla) <- c("N? de tweets", 
-                     "Fecha creaci?n cuenta", 
-                     "Media tweets por d?a", 
-                     "N? likes a tweets de otros", 
-                     "N? cuentas a las que sigue", 
-                     "Ratio likes por cada 100 cuentas a las que sigue")
-
-# 2. RED DE SEGUIDORES
-
-recuento_seguidores                  = cuentasGVA_df$followersCount
-
-evol_seguidores_respecto_mesant 
-
-ratio_seguidores_cuentasquesigue     = cuentasGVA_df$followersCount / cuentasGVA_df$friendsCount
-
-recuento_listas_pertenece            = cuentasGVA_df$listedCount
-
-num_medio_seguidores_por_seguidor
 
 
